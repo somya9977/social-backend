@@ -126,7 +126,29 @@ router.put("/:id", isLoggedIn, async (req, res) => {
       err: error.message,
     });
   }
-});
+})
+
+
+router.get("/my-posts", isLoggedIn, async (req, res) => {
+    try {
+        const foundUser = req.user
+        const posts = await Post.find({ authorId: foundUser._id })
+           
+
+        res.status(200).json({
+            success: true,
+            posts
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message
+        })
+    }
+})
+
+
 
 
 module.exports = {

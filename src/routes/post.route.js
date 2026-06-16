@@ -61,35 +61,7 @@ router.get("/:id", isLoggedIn, async(req, res) => {
     }
 })
 
-router.delete("/delete", isLoggedIn, async (req, res) => {
-    try {
-        const { postId } = req.body;
-        const userId = req.user._id;
-
-        const foundPost = await Post.findById(postId);
-
-        if (!foundPost) {
-            throw new Error("Post not found");
-        }
-
-        if (foundPost.authorId.toString() !== userId.toString()) {
-            throw new Error("Unauthorized");
-        }
-
-        await Post.findByIdAndDelete(postId);
-
-        res.status(200).json({
-            status: "success",
-            msg: "Post deleted successfully"
-        });
-
-    } catch (error) {
-        res.status(400).json({
-            status: "failed",
-            error: error.message
-        });
-    }
-});router.delete("/:postId", isLoggedIn, async (req, res) => {
+router.delete("/:postId", isLoggedIn, async (req, res) => {
     try {
         const { postId } = req.params
         const foundUser = req.user

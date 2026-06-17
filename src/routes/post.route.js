@@ -42,7 +42,7 @@ router.get("/:id", isLoggedIn, async(req, res) => {
             
             }
 
-            const post = await Post.findById(id)
+            const post = await Post.findById(id).populate("comments")
 
             if(!post)
             {
@@ -93,7 +93,7 @@ router.delete("/:postId", isLoggedIn, async (req, res) => {
 
 router.get("/my-posts", isLoggedIn, async (req, res) => {
   try {
-    const posts = await Post.find({authorId: req.user._id});
+    const posts = await Post.find({authorId: req.user._id}).populate("comments");
 
     if (posts.length === 0) {
       return res.status(200).json({

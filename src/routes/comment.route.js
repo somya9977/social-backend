@@ -3,6 +3,7 @@ const { isLoggedIn } = require("../middlewares/isLoggedIn")
 const { Post } = require("../models/post.model")
 const router = express.Router()
 const mongoose = require("mongoose")
+const { Comment } = require("../models/comment.model")
 
 
 router.post("/create-comment", isLoggedIn, async(req, res) => {
@@ -47,6 +48,43 @@ router.post("/create-comment", isLoggedIn, async(req, res) => {
         })
     }
 })
+
+router.delete("/:id", isLoggedIn, async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    const post = await Post.findById(comment.postId);
+
+    const isCommentOwner = comment.authorId.toString() === req.user._id.toString();
+
+    const isPostOwner = post && post.authorId.toString() === req.user._id.toString();
+
+    if (!isCommentOwner && !isPostOwner) 
+    {
+      throw new Error("You are not authorized to delete this comment");
+    }
+
+    await Post.findByIdAndUpdate(comment.postId, {
+      $pull: {comments: comment._id},
+    });
+
+    await Comment.findByIdAndDelete(comment._id);
+
+    res.status(200).json({
+      success: true,
+      msg: "Comment deleted successfully",
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      err: error.message,
+    });
+  }
+});
 
 module.exports = {
     commentRouter: router

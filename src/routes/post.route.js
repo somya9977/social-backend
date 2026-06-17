@@ -67,7 +67,7 @@ router.get("/:id", isLoggedIn, async(req, res) => {
             
             }
 
-            const post = await Post.findById(id)
+            const post = await Post.findById(id).populate("comments")
 
             if(!post)
             {

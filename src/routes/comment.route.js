@@ -66,9 +66,12 @@ router.delete("/:id", isLoggedIn, async(req, res) => {
             throw new Error("Post not found")
             }
 
+            const isCommentAuthor = comment.authorId.toString() === foundUser._id.toString()
+            const isPostOwner = post.authorId.toString() === foundUser._id.toString()
 
 
-            if (!(comment.authorId.toString() !== foundUser._id.toString()) && !(post.authorId.toString() !== foundUser._id.toString())) {
+
+            if (!isCommentAuthor && !isPostOwner) {
               throw new Error("You are not authorized to delete this comment")
             }
             

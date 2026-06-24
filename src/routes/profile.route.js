@@ -217,7 +217,7 @@ router.get("/search", isLoggedIn, async (req, res) => {
                 })
             }
 
-            const users = User.find({
+            const users = await User.find({
                 username : {$regex : query, $options : "i"},
                 _id : {$ne : foundUser.id} 
             })
